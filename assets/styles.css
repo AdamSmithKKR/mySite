@@ -1,0 +1,205 @@
+/* ─────────────────────────────────────────────
+   Global Design System – Nature Green Theme
+   ───────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Glass */
+  --glass-bg-light: rgba(255, 255, 255, 0.55);
+  --glass-bg-dark: rgba(18, 28, 22, 0.55);
+  --glass-border-light: rgba(62, 207, 142, 0.12);
+  --glass-border-dark: rgba(83, 232, 164, 0.08);
+  --accent-light: #3ECF8E;
+  --accent-dark: #53E8A4;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Glassmorphism Panels ── */
+.glass-panel-light {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  border-radius: 20px;
+}
+
+.glass-panel-dark {
+  background: var(--glass-bg-dark);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border-dark);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+  border-radius: 20px;
+}
+
+/* ── Card Variants ── */
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(62, 207, 142, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.glass-card-light:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(62, 207, 142, 0.12);
+  border-color: rgba(62, 207, 142, 0.3);
+}
+
+.glass-card-dark {
+  background: rgba(20, 30, 24, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(83, 232, 164, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.glass-card-dark:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(83, 232, 164, 0.1);
+  border-color: rgba(83, 232, 164, 0.2);
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.6s; }
+
+/* ── Hover Micro-interactions ── */
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+}
+
+/* ── Section Title accent bar ── */
+.section-accent {
+  position: relative;
+  padding-left: 1rem;
+}
+.section-accent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, var(--accent-light), transparent);
+}
+
+/* ── Lottie decoration containers beside cards ── */
+.lottie-bg-left, .lottie-bg-right {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.2;
+}
+.lottie-bg-left {
+  left: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.lottie-bg-right {
+  right: -80px;
+  top: 30%;
+}
+
+/* ── Print Styles ── */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide everything interactive */
+  .no-print, .header, .hero-section,
+  iframe, video, lottie-player,
+  .lottie-bg-left, .lottie-bg-right,
+  .footer-lottie {
+    display: none !important;
+  }
+
+  /* Hide the interactive tab-based resume view */
+  #resume-content {
+    display: none !important;
+  }
+
+  /* Show the sequential print CV */
+  .print-cv-section {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0.5in !important;
+    max-width: none !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .glass-panel-light, .glass-panel-dark,
+  .glass-card-light, .glass-card-dark {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #eee !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+  }
+
+  /* Ensure proper page breaks */
+  .print-cv-section > div {
+    break-inside: avoid;
+  }
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
+
