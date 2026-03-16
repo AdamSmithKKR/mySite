@@ -144,6 +144,6 @@ def header_component() -> rx.Component:
         max_width="1200px",
         z_index="1000",
         padding="0.8rem 1.5rem",
-        class_name=rx.color_mode_cond(light="glass-panel-light", dark="glass-panel-dark"),
+        class_name=" ".join([rx.color_mode_cond(light="glass-panel-light", dark="glass-panel-dark"), "no-print"]),
         transition="all 0.3s ease",
     )
