@@ -7,11 +7,11 @@ from .components import header, hero, resume_view
 from .components.print_cv import print_cv_view
 
 
-# Lottie URLs (reuse from hero.py for consistency)
-LOTTIE_GROWING_PLANT = "https://lottie.host/f5478e35-2201-43e4-9041-f8be4c264fa9/bCXoOGoJjV.json"
-LOTTIE_DESK_PLANT = "https://lottie.host/29563399-4945-4b21-bcb0-318ab0e125c2/4k3u4GQhEu.json"
-LOTTIE_PLANT_3 = "https://lottie.host/80d3ab51-cded-4797-9948-d60a1fc44835/5CRKwCNElh.json"
-LOTTIE_PLANT_4 = "https://lottie.host/4b453e62-9e3e-42ec-812c-fa7e8a5c42f5/HcWGmz4xg3.json"
+# Local Lottie animation files (served from /assets)
+LOTTIE_GROWING_PLANT = "/Growing Plant.lottie"
+LOTTIE_DESK_PLANT = "/Plant, Office, Desk.lottie"
+LOTTIE_PLANT_3 = "/Plants.lottie"
+LOTTIE_PLANT_4 = "/Animated plant loader..lottie"
 
 
 def index() -> rx.Component:
