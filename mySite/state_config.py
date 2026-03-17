@@ -75,6 +75,11 @@ class AppState(rx.State):
             # Profile
             db_prof = session.exec(select(Profile)).first()
             if db_prof:
+                # Make sure we always have a valid email to render as a mailto: link
+                if not db_prof.gmail_url:
+                    db_prof.gmail_url = "kirthikraj555@gmail.com"
+                    session.add(db_prof)
+                    session.commit()
                 self.profile = db_prof
 
             self.education_list = session.exec(select(Education).order_by(Education.order_index)).all()

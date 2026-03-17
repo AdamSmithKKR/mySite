@@ -4,8 +4,13 @@ from sqlmodel import select
 
 def seed_db():
     with rx.session() as session:
-        # Check if already seeded
-        if session.exec(select(Profile)).first():
+        # If DB already has data, ensure gmail_url is populated and stop further seeding.
+        existing_prof = session.exec(select(Profile)).first()
+        if existing_prof:
+            if not existing_prof.gmail_url:
+                existing_prof.gmail_url = "kirthikraj555@gmail.com"
+                session.add(existing_prof)
+                session.commit()
             return
             
         print("Seeding database...")
