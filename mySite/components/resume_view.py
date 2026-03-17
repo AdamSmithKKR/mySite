@@ -148,18 +148,47 @@ def _render_technical_summary() -> rx.Component:
     )
 
 
-def _render_companies() -> rx.Component:
+def _render_companies_section() -> rx.Component:
+    """Render the collapsible Companies / Experience section in the left pane."""
     return rx.vstack(
-        rx.hstack(
-            rx.icon(tag="building", size=24, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-            rx.heading("Professional Experience", size="6", font_weight="700"),
-            spacing="3",
-            align_items="center",
-            class_name="section-accent",
+        # Collapsible Header (acts as the section title)
+        rx.box(
+            rx.hstack(
+                rx.icon(
+                    tag=rx.cond(AppState.show_company_list, "chevron-down", "chevron-right"),
+                    size=20,
+                    color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent),
+                ),
+                rx.text(
+                    "Companies / Experience",
+                    font_weight="600",
+                    font_size="0.95rem",
+                ),
+                spacing="2",
+                align_items="center",
+                width="100%",
+            ),
+            padding="1rem 1.2rem",
+            cursor="pointer",
+            border_radius="12px",
+            background=rx.cond(
+                AppState.active_tab == "Companies / Experience",
+                rx.color_mode_cond("rgba(62,207,142,0.08)", "rgba(83,232,164,0.08)"),
+                "transparent",
+            ),
+            border=rx.cond(
+                AppState.active_tab == "Companies / Experience",
+                rx.color_mode_cond("1px solid rgba(62,207,142,0.2)", "1px solid rgba(83,232,164,0.15)"),
+                "1px solid transparent",
+            ),
+            on_click=AppState.toggle_companies_section,
+            _hover={"background": rx.color_mode_cond("rgba(62,207,142,0.12)", "rgba(83,232,164,0.12)")},
+            transition="all 0.25s ease",
+            margin_bottom="0.5rem",
         ),
-        # Company-selector + Details side by side
-        rx.flex(
-            # Company List
+        # Company Items (Collapsible Content)
+        rx.cond(
+            AppState.show_company_list,
             rx.vstack(
                 rx.foreach(
                     AppState.companies,
@@ -193,98 +222,103 @@ def _render_companies() -> rx.Component:
                             rx.color_mode_cond("1px solid rgba(62,207,142,0.2)", "1px solid rgba(83,232,164,0.15)"),
                             "1px solid transparent",
                         ),
-                        on_click=AppState.set_active_company(comp.id),
+                        on_click=AppState.select_company(comp.id),
                         _hover={"background": rx.color_mode_cond("rgba(0,0,0,0.02)", "rgba(255,255,255,0.02)")},
                         transition="all 0.25s ease",
                         margin_bottom="0.3rem",
                     ),
                 ),
-                width="30%",
-                padding_right="1.5rem",
-                border_right="1px solid rgba(62, 207, 142, 0.1)",
+                width="100%",
                 align_items="flex-start",
+                spacing="0",
             ),
-            # Company Details
-            rx.box(
-                rx.foreach(
-                    AppState.companies,
-                    lambda comp: rx.cond(
-                        AppState.active_company_id == comp.id,
-                        rx.vstack(
-                            rx.heading(comp.name, size="5", font_weight="700"),
-                            rx.badge(comp.duration, color_scheme="green", variant="soft", font_size="0.8rem"),
+            rx.fragment(),
+        ),
+        width="100%",
+        align_items="flex-start",
+    )
+
+
+def _render_companies() -> rx.Component:
+    return rx.vstack(
+        rx.hstack(
+            rx.icon(tag="building", size=24, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
+            rx.heading("Professional Experience", size="6", font_weight="700"),
+            spacing="3",
+            align_items="center",
+            class_name="section-accent",
+        ),
+        rx.foreach(
+            AppState.companies,
+            lambda comp: rx.cond(
+                AppState.active_company_id == comp.id,
+                rx.vstack(
+                    rx.heading(comp.name, size="5", font_weight="700"),
+                    rx.badge(comp.duration, color_scheme="green", variant="soft", font_size="0.8rem"),
+                    rx.box(
+                        rx.hstack(
+                            rx.icon(tag="clipboard-list", size=18, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
+                            rx.text("Roles & Responsibilities", font_weight="600", font_size="0.95rem"),
+                            spacing="2",
+                            align_items="center",
+                        ),
+                        rx.text(comp.roles_and_responsibilities, white_space="pre-wrap", font_size="0.93rem", line_height="1.7", opacity="0.85", margin_top="0.5rem"),
+                        padding="1.2rem",
+                        class_name=rx.color_mode_cond("glass-card-light", "glass-card-dark"),
+                        width="100%",
+                        margin_top="1rem",
+                    ),
+                    rx.hstack(
+                        rx.icon(tag="folder-open", size=18, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
+                        rx.heading("Key Projects", size="4", font_weight="600"),
+                        spacing="2",
+                        align_items="center",
+                        margin_top="1.5rem",
+                    ),
+                    rx.foreach(
+                        AppState.projects,
+                        lambda proj: rx.cond(
+                            proj.company_id == comp.id,
                             rx.box(
                                 rx.hstack(
-                                    rx.icon(tag="clipboard-list", size=18, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-                                    rx.text("Roles & Responsibilities", font_weight="600", font_size="0.95rem"),
+                                    rx.icon(tag="folder-kanban", size=16, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
+                                    rx.text(proj.name, font_weight="600", font_size="1rem"),
                                     spacing="2",
                                     align_items="center",
                                 ),
-                                rx.text(comp.roles_and_responsibilities, white_space="pre-wrap", font_size="0.93rem", line_height="1.7", opacity="0.85", margin_top="0.5rem"),
+                                rx.hstack(
+                                    rx.icon(tag="users", size=14, color="gray"),
+                                    rx.text(proj.customer, font_size="0.85rem", font_style="italic", color="gray"),
+                                    spacing="2",
+                                    align_items="center",
+                                    margin_top="0.5rem",
+                                ),
+                                rx.hstack(
+                                    rx.icon(tag="cpu", size=14, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
+                                    rx.text(proj.technology_used, font_size="0.85rem", font_weight="500"),
+                                    spacing="2",
+                                    align_items="center",
+                                    margin_top="0.3rem",
+                                ),
+                                rx.text(proj.description, font_size="0.93rem", line_height="1.6", opacity="0.85", margin_top="0.6rem"),
                                 padding="1.2rem",
                                 class_name=rx.color_mode_cond("glass-card-light", "glass-card-dark"),
-                                width="100%",
-                                margin_top="1rem",
+                                margin_bottom="0.75rem",
                             ),
-                            rx.hstack(
-                                rx.icon(tag="folder-open", size=18, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-                                rx.heading("Key Projects", size="4", font_weight="600"),
-                                spacing="2",
-                                align_items="center",
-                                margin_top="1.5rem",
-                            ),
-                            rx.foreach(
-                                AppState.projects,
-                                lambda proj: rx.cond(
-                                    proj.company_id == comp.id,
-                                    rx.box(
-                                        rx.hstack(
-                                            rx.icon(tag="folder-kanban", size=16, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-                                            rx.text(proj.name, font_weight="600", font_size="1rem"),
-                                            spacing="2",
-                                            align_items="center",
-                                        ),
-                                        rx.hstack(
-                                            rx.icon(tag="users", size=14, color="gray"),
-                                            rx.text(proj.customer, font_size="0.85rem", font_style="italic", color="gray"),
-                                            spacing="2",
-                                            align_items="center",
-                                            margin_top="0.5rem",
-                                        ),
-                                        rx.hstack(
-                                            rx.icon(tag="cpu", size=14, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-                                            rx.text(proj.technology_used, font_size="0.85rem", font_weight="500"),
-                                            spacing="2",
-                                            align_items="center",
-                                            margin_top="0.3rem",
-                                        ),
-                                        rx.text(proj.description, font_size="0.93rem", line_height="1.6", opacity="0.85", margin_top="0.6rem"),
-                                        padding="1.2rem",
-                                        class_name=rx.color_mode_cond("glass-card-light", "glass-card-dark"),
-                                        margin_bottom="0.75rem",
-                                    ),
-                                    rx.fragment(),
-                                ),
-                            ),
-                            width="100%",
-                            padding_left="2rem",
-                            class_name="animate-fade-in-up",
+                            rx.fragment(),
                         ),
-                        rx.fragment(),
                     ),
+                    width="100%",
+                    padding_left="2rem",
+                    class_name="animate-fade-in-up",
                 ),
-                width="70%",
+                rx.fragment(),
             ),
-            width="100%",
-            align_items="flex-start",
-            direction="row",
-            gap="4",
         ),
         width="100%",
         spacing="5",
         class_name="animate-fade-in-up",
     )
-
 
 def _render_education() -> rx.Component:
     return rx.vstack(
@@ -435,7 +469,7 @@ def split_pane_view() -> rx.Component:
                 _render_tab_button("Objective", "target"),
                 _render_tab_button("Professional Summary", "briefcase"),
                 _render_tab_button("Technical Summary", "wrench"),
-                _render_tab_button("Companies / Experience", "building"),
+                _render_companies_section(),
                 _render_tab_button("Education / Skills / Certs", "graduation-cap"),
                 width="280px",
                 min_width="280px",
