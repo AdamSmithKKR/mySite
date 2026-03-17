@@ -2,13 +2,6 @@ import reflex as rx
 from ..state_config import AppState
 
 
-# Local Lottie animation files (served from /assets)
-LOTTIE_GROWING_PLANT = "/Growing Plant.lottie"
-LOTTIE_DESK_PLANT = "/Plant, Office, Desk.lottie"
-LOTTIE_PLANT_3 = "/Plants.lottie"
-LOTTIE_PLANT_4 = "/Animated plant loader..lottie"
-
-
 def hero_section() -> rx.Component:
     return rx.box(
         # ── Background Video (Light mode) ──
@@ -63,26 +56,6 @@ def hero_section() -> rx.Component:
                 dark="linear-gradient(to bottom, rgba(15,23,18,0.45) 0%, rgba(15,23,18,0.75) 35%, rgba(15,23,18,0.95) 65%, #0F1712 100%)",
             ),
         ),
-
-        # ── Lottie Animations BEHIND the overlay (z-index:0) ──
-        rx.html(f'''
-        <div style="position:absolute;bottom:20px;right:5%;z-index:0;opacity:0.4;pointer-events:none;">
-            <lottie-player src="{LOTTIE_GROWING_PLANT}" background="transparent" speed="0.8"
-                style="width:280px;height:280px;" loop autoplay></lottie-player>
-        </div>
-        '''),
-        rx.html(f'''
-        <div style="position:absolute;bottom:60px;left:3%;z-index:0;opacity:0.3;pointer-events:none;">
-            <lottie-player src="{LOTTIE_DESK_PLANT}" background="transparent" speed="0.6"
-                style="width:220px;height:220px;" loop autoplay></lottie-player>
-        </div>
-        '''),
-        rx.html(f'''
-        <div style="position:absolute;top:15%;right:12%;z-index:0;opacity:0.25;pointer-events:none;">
-            <lottie-player src="{LOTTIE_PLANT_3}" background="transparent" speed="0.5"
-                style="width:180px;height:180px;" loop autoplay></lottie-player>
-        </div>
-        '''),
 
         # ── Foreground Hero Content ──
         rx.vstack(

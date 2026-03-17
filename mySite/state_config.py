@@ -22,6 +22,7 @@ class AppState(rx.State):
     profile: Profile = Profile(
         name="Kirthik Raj",
         linkedin_url="https://www.linkedin.com/in/kirthik-raj-93952674",
+        gmail_url="kirthikraj555@gmail.com",
         objective_title="Objective / Overview",
         objective_text="",
         professional_summary_title="Professional Summary",

@@ -109,7 +109,7 @@ def index() -> rx.Component:
                                 },
                                 transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                             ),
-                            href="https://www.linkedin.com/in/kirthik-raj-93952674",
+                            href=AppState.profile.linkedin_url,
                             is_external=True,
                         ),
                         rx.link(
@@ -126,7 +126,7 @@ def index() -> rx.Component:
                                 },
                                 transition="all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                             ),
-                            href="mailto:kirthikraj555@gmail.com",
+                            href=f"mailto:{AppState.profile.gmail_url}",
                             is_external=True,
                         ),
                         spacing="3",

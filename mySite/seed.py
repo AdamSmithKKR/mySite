@@ -30,6 +30,7 @@ def seed_db():
         prof = Profile(
             name="Kirthik Raj",
             linkedin_url="https://www.linkedin.com/in/kirthik-raj-93952674",
+            gmail_url="kirthikraj555@gmail.com",
             objective_title="Objective / Overview",
             objective_text="Results-driven technology architect known for simplifying development lifecycles through structured thinking, delivering optimized solutions and maintaining consistent client relationships.",
             professional_summary_title="Professional Summary",

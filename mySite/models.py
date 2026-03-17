@@ -22,6 +22,7 @@ class ThemeConfig(rx.Model, table=True):
 class Profile(rx.Model, table=True):
     name: str
     linkedin_url: str
+    gmail_url: str
     
     objective_title: str
     objective_text: str
