@@ -38,28 +38,19 @@ class AppState(rx.State):
     companies: list[Company] = []
     projects: list[Project] = []
 
-    active_tab: str = "Objective"
     active_company_id: int = -1
     show_company_list: bool = True
-
-    def set_active_tab(self, tab: str):
-        self.active_tab = tab
 
     def set_active_company(self, company_id: int):
         self.active_company_id = company_id
 
-    def toggle_company_list(self):
-        self.show_company_list = not self.show_company_list
-
     def toggle_companies_section(self):
-        """Toggle the Companies section open/closed and activate the tab."""
+        """Toggle the Companies section open/closed."""
         self.show_company_list = not self.show_company_list
-        self.active_tab = "Companies / Experience"
 
     def select_company(self, company_id: int):
-        """Select a company and switch to Companies / Experience tab."""
+        """Select a company in the experience panel."""
         self.active_company_id = company_id
-        self.active_tab = "Companies / Experience"
 
     def load_data(self):
         """Load data from database into state"""

@@ -1,8 +1,19 @@
 import reflex as rx
 from .models import ThemeConfig, Profile, Education, Certification, Skill, Company, Project
-from sqlmodel import select
+from sqlmodel import select, SQLModel
+
+def _ensure_tables():
+    """Create all tables if they don't exist yet (safe on repeated calls)."""
+    try:
+        import sqlalchemy as sa
+        from rxconfig import config as app_config
+        engine = sa.create_engine(app_config.db_url)
+        SQLModel.metadata.create_all(engine)
+    except Exception as e:
+        print(f"[seed] Table creation warning: {e}")
 
 def seed_db():
+    _ensure_tables()
     with rx.session() as session:
         # If DB already has data, ensure gmail_url is populated and stop further seeding.
         existing_prof = session.exec(select(Profile)).first()

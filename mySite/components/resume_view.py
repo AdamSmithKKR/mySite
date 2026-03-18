@@ -2,70 +2,6 @@ import reflex as rx
 from ..state_config import AppState
 
 
-# ─── Tab Button ───
-def _render_tab_button(label: str, icon_tag: str) -> rx.Component:
-    is_active = AppState.active_tab == label
-    return rx.box(
-        rx.hstack(
-            rx.box(
-                rx.icon(
-                    tag=icon_tag,
-                    size=18,
-                    color=rx.cond(
-                        is_active,
-                        rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent),
-                        rx.color_mode_cond("rgba(43,58,49,0.5)", "rgba(232,241,236,0.4)"),
-                    ),
-                ),
-                padding="0.5rem",
-                border_radius="10px",
-                background=rx.cond(
-                    is_active,
-                    rx.color_mode_cond("rgba(62,207,142,0.12)", "rgba(83,232,164,0.1)"),
-                    "transparent",
-                ),
-                transition="all 0.3s ease",
-            ),
-            rx.text(
-                label,
-                font_weight=rx.cond(is_active, "600", "400"),
-                font_size="0.9rem",
-                color=rx.cond(
-                    is_active,
-                    rx.color_mode_cond(AppState.theme.light_text, AppState.theme.dark_text),
-                    rx.color_mode_cond("rgba(43,58,49,0.6)", "rgba(232,241,236,0.5)"),
-                ),
-            ),
-            spacing="3",
-            align_items="center",
-            width="100%",
-        ),
-        width="100%",
-        padding="0.85rem 1.2rem",
-        cursor="pointer",
-        border_radius="12px",
-        background=rx.cond(
-            is_active,
-            rx.color_mode_cond(
-                "linear-gradient(135deg, rgba(62,207,142,0.08) 0%, rgba(62,207,142,0.02) 100%)",
-                "linear-gradient(135deg, rgba(83,232,164,0.1) 0%, rgba(83,232,164,0.02) 100%)",
-            ),
-            "transparent",
-        ),
-        border=rx.cond(
-            is_active,
-            rx.color_mode_cond("1px solid rgba(62,207,142,0.2)", "1px solid rgba(83,232,164,0.15)"),
-            "1px solid transparent",
-        ),
-        on_click=AppState.set_active_tab(label),
-        _hover={
-            "background": rx.color_mode_cond("rgba(62,207,142,0.05)", "rgba(83,232,164,0.05)"),
-        },
-        transition="all 0.25s ease",
-        margin_bottom="0.35rem",
-    )
-
-
 # ─── Content Renderers ───
 
 def _render_objective_content() -> rx.Component:
@@ -172,12 +108,12 @@ def _render_companies_section() -> rx.Component:
             cursor="pointer",
             border_radius="12px",
             background=rx.cond(
-                AppState.active_tab == "Companies / Experience",
+                AppState.show_company_list,
                 rx.color_mode_cond("rgba(62,207,142,0.08)", "rgba(83,232,164,0.08)"),
                 "transparent",
             ),
             border=rx.cond(
-                AppState.active_tab == "Companies / Experience",
+                AppState.show_company_list,
                 rx.color_mode_cond("1px solid rgba(62,207,142,0.2)", "1px solid rgba(83,232,164,0.15)"),
                 "1px solid transparent",
             ),
@@ -450,80 +386,155 @@ def _render_skills(title: str, icon_tag: str, items) -> rx.Component:
 
 
 # ═══════════════════════════════════════════
-# Main Split-Pane View
+# Card-Based Layout View
 # ═══════════════════════════════════════════
-def split_pane_view() -> rx.Component:
-    return rx.box(
-        rx.flex(
-            # ── Left Navigation Pane ──
-            rx.vstack(
-                rx.hstack(
-                    rx.icon(tag="layout-dashboard", size=20, color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent)),
-                    rx.text("Sections", font_weight="700", font_size="0.85rem", text_transform="uppercase", letter_spacing="0.08em"),
-                    spacing="2",
-                    align_items="center",
-                    padding="0.5rem 1.2rem",
-                    margin_bottom="0.5rem",
-                    opacity="0.7",
-                ),
-                _render_tab_button("Objective", "target"),
-                _render_tab_button("Professional Summary", "briefcase"),
-                _render_tab_button("Technical Summary", "wrench"),
-                _render_companies_section(),
-                _render_tab_button("Education / Skills / Certs", "graduation-cap"),
-                width="280px",
-                min_width="280px",
-                padding="1.5rem 1rem",
-                align_items="flex-start",
-                border_right="1px solid rgba(62,207,142,0.1)",
-                min_height="600px",
-                class_name="resume-left",
-            ),
+def card_layout_view() -> rx.Component:
+    """
+    Sections rendered as distinct cards:
+      1. Objective        – full-width, overlaps hero
+      2. Prof Summary + Tech Summary  – side by side
+      3. Companies / Experience       – existing split-pane intact
+      4. Tech Skills + Linguistic     – side by side
+      5. Education + Certifications   – side by side
+    """
+    _card_shadow = rx.color_mode_cond(
+        "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(62,207,142,0.05)",
+        "0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(83,232,164,0.04)",
+    )
+    _hero_card_shadow = rx.color_mode_cond(
+        "0 20px 60px rgba(0,0,0,0.08), 0 4px 15px rgba(62,207,142,0.06)",
+        "0 20px 60px rgba(0,0,0,0.3), 0 4px 15px rgba(83,232,164,0.05)",
+    )
 
-            # ── Right Content Pane ──
+    return rx.vstack(
+
+        # ── 1. Objective: full-width card (overlaps hero) ──────────────────
+        rx.box(
+            _render_objective_content(),
+            padding="2.5rem 3rem",
+            border_radius="24px",
+            width="100%",
+            class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+            box_shadow=_hero_card_shadow,
+        ),
+
+        # ── 2. Professional Summary  |  Technical Summary ──────────────────
+        rx.box(
             rx.box(
-                rx.match(
-                    AppState.active_tab,
-                    ("Objective", _render_objective_content()),
-                    ("Professional Summary", _render_professional_summary()),
-                    ("Technical Summary", _render_technical_summary()),
-                    ("Companies / Experience", _render_companies()),
-                    (
-                        "Education / Skills / Certs",
-                        rx.vstack(
-                            _render_education(),
-                            rx.box(height="2rem"),
-                            _render_skills("Technical Skills", "code", AppState.technical_skills),
-                            rx.box(height="2rem"),
-                            _render_skills("Linguistic Ability", "languages", AppState.language_skills),
-                            rx.box(height="2rem"),
-                            _render_certifications(),
-                            width="100%",
-                            spacing="2",
+                _render_professional_summary(),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            rx.box(
+                _render_technical_summary(),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            class_name="side-by-side-row",
+        ),
+
+        # ── 3. Companies / Experience (split-pane layout preserved) ─────────
+        rx.box(
+            rx.flex(
+                # Left: collapsible company navigator
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(
+                            tag="building-2",
+                            size=20,
+                            color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent),
                         ),
+                        rx.text(
+                            "Experience",
+                            font_weight="700",
+                            font_size="0.85rem",
+                            text_transform="uppercase",
+                            letter_spacing="0.08em",
+                        ),
+                        spacing="2",
+                        align_items="center",
+                        padding="0.5rem 1.2rem",
+                        margin_bottom="0.5rem",
+                        opacity="0.7",
                     ),
-                    _render_objective_content(),
+                    _render_companies_section(),
+                    width="280px",
+                    min_width="280px",
+                    padding="1.5rem 1rem",
+                    align_items="flex-start",
+                    border_right=rx.color_mode_cond(
+                        "1px solid rgba(62,207,142,0.1)",
+                        "1px solid rgba(83,232,164,0.08)",
+                    ),
+                    min_height="500px",
+                    class_name="resume-left",
                 ),
-                flex="1",
-                padding="3rem",
-                class_name="resume-right",
-                overflow_y="auto",
+                # Right: company details
+                rx.box(
+                    _render_companies(),
+                    flex="1",
+                    padding="3rem",
+                    class_name="resume-right",
+                    overflow_y="auto",
+                ),
+                direction="row",
+                width="100%",
+                align_items="stretch",
+                class_name="resume-layout",
             ),
             width="100%",
-            align_items="stretch",
-            class_name="resume-layout",
-            direction="row",
+            border_radius="24px",
+            overflow="hidden",
+            class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+            box_shadow=_hero_card_shadow,
         ),
-        # Container styling
+
+        # ── 4. Technical Skills  |  Linguistic Ability ─────────────────────
+        rx.box(
+            rx.box(
+                _render_skills("Technical Skills", "code", AppState.technical_skills),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            rx.box(
+                _render_skills("Linguistic Ability", "languages", AppState.language_skills),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            class_name="side-by-side-row",
+        ),
+
+        # ── 5. Education  |  Certifications ───────────────────────────────
+        rx.box(
+            rx.box(
+                _render_education(),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            rx.box(
+                _render_certifications(),
+                padding="2.5rem",
+                border_radius="20px",
+                class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+                box_shadow=_card_shadow,
+            ),
+            class_name="side-by-side-row",
+        ),
+
         width="100%",
-        border_radius="24px",
-        overflow="hidden",
-        class_name=rx.color_mode_cond("glass-panel-light", "glass-panel-dark"),
+        spacing="5",
+        align_items="stretch",
         margin_top="-12vh",
         position="relative",
         z_index="20",
-        box_shadow=rx.color_mode_cond(
-            "0 20px 60px rgba(0,0,0,0.08), 0 4px 15px rgba(62,207,142,0.06)",
-            "0 20px 60px rgba(0,0,0,0.3), 0 4px 15px rgba(83,232,164,0.05)",
-        ),
     )

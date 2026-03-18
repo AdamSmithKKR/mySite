@@ -27,8 +27,14 @@ def hero_section() -> rx.Component:
         rx.html("""
         <script>
         (function() {
+            function isDarkMode() {
+                const styleScheme = document.documentElement.style.colorScheme;
+                if (styleScheme) return styleScheme === "dark";
+                return document.documentElement.classList.contains('dark');
+            }
+
             function updateVids() {
-                var isDark = document.documentElement.classList.contains('dark');
+                var isDark = isDarkMode();
                 var vl = document.getElementById('hero-video-light');
                 var vd = document.getElementById('hero-video-dark');
                 if (vl && vd) {
@@ -38,7 +44,7 @@ def hero_section() -> rx.Component:
             }
             updateVids();
             var obs = new MutationObserver(updateVids);
-            obs.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+            obs.observe(document.documentElement, {attributes: true, attributeFilter: ['class', 'style']});
         })();
         </script>
         """),
@@ -96,16 +102,6 @@ def hero_section() -> rx.Component:
                     class_name="animate-fade-in-up delay-2",
                     color=rx.color_mode_cond(AppState.theme.light_text, AppState.theme.dark_text),
                 ),
-                rx.text(
-                    AppState.profile.objective_text,
-                    font_size="1.05rem",
-                    max_width="650px",
-                    line_height="1.7",
-                    opacity="0.75",
-                    margin_top="1.5rem",
-                    class_name="animate-fade-in-up delay-3",
-                    color=rx.color_mode_cond(AppState.theme.light_text, AppState.theme.dark_text),
-                ),
                 spacing="3",
                 align_items="flex-start",
                 padding="0 8%",
@@ -121,7 +117,7 @@ def hero_section() -> rx.Component:
         ),
 
         # ── Hero container ──
-        height="75vh",
+        height="55vh",
         width="100%",
         position="relative",
         overflow="hidden",

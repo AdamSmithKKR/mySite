@@ -7,18 +7,15 @@ from .components import header, hero, resume_view
 from .components.print_cv import print_cv_view
 
 
-# Local Lottie animation files (served from /assets)
-LOTTIE_GROWING_PLANT = "/Growing Plant.lottie"
-LOTTIE_DESK_PLANT = "/Plant, Office, Desk.lottie"
-LOTTIE_PLANT_3 = "/Plants.lottie"
-LOTTIE_PLANT_4 = "/Animated plant loader..lottie"
+# Local Lottie animation files (served from /assets – plain JSON format)
+LOTTIE_GROWING_PLANT = "/Growing_Plant.json"
+LOTTIE_DESK_PLANT = "/Plant_Office_Desk.json"
+LOTTIE_PLANT_3 = "/Plants.json"
+LOTTIE_PLANT_4 = "/Animated_plant_loader.json"
 
 
 def index() -> rx.Component:
     return rx.box(
-        # Load Lottie player script
-        rx.script(src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"),
-
         # Floating header
         header.header_component(),
 
@@ -31,19 +28,19 @@ def index() -> rx.Component:
                 # Left Lottie decoration (beside cards)
                 rx.html(f'''
                 <div class="lottie-bg-left no-print" style="position:absolute;left:-100px;top:40%;z-index:0;opacity:0.15;pointer-events:none;">
-                    <lottie-player src="{LOTTIE_PLANT_3}" background="transparent" speed="0.4"
-                        style="width:200px;height:200px;" loop autoplay></lottie-player>
+                    <lottie-player src="{LOTTIE_PLANT_3}" background="transparent" speed="1" loop autoplay
+                        style="width:200px;height:200px;"></lottie-player>
                 </div>
                 '''),
                 # Right Lottie decoration (beside cards)
                 rx.html(f'''
                 <div class="lottie-bg-right no-print" style="position:absolute;right:-100px;top:25%;z-index:0;opacity:0.15;pointer-events:none;">
-                    <lottie-player src="{LOTTIE_PLANT_4}" background="transparent" speed="0.5"
-                        style="width:200px;height:200px;" loop autoplay></lottie-player>
+                    <lottie-player src="{LOTTIE_PLANT_4}" background="transparent" speed="1" loop autoplay
+                        style="width:200px;height:200px;"></lottie-player>
                 </div>
                 '''),
 
-                resume_view.split_pane_view(),
+                resume_view.card_layout_view(),
                 width="100%",
                 max_width="1200px",
                 margin="0 auto",
@@ -62,18 +59,18 @@ def index() -> rx.Component:
 
         # ── Footer with Lottie decorations ──
         rx.box(
-            # Left footer Lottie
+            # Left footer Lottie (flanking center content)
             rx.html(f'''
-            <div class="footer-lottie" style="position:absolute;left:2%;bottom:0;opacity:0.18;pointer-events:none;z-index:0;">
-                <lottie-player src="{LOTTIE_GROWING_PLANT}" background="transparent" speed="0.6"
-                    style="width:160px;height:160px;" loop autoplay></lottie-player>
+            <div class="footer-lottie" style="position:absolute;left:calc(50% - 480px);bottom:0;opacity:0.18;pointer-events:none;z-index:0;">
+                <lottie-player src="{LOTTIE_GROWING_PLANT}" background="transparent" speed="1" loop autoplay
+                    style="width:160px;height:160px;"></lottie-player>
             </div>
             '''),
-            # Right footer Lottie
+            # Right footer Lottie (flanking center content)
             rx.html(f'''
-            <div class="footer-lottie" style="position:absolute;right:2%;bottom:0;opacity:0.18;pointer-events:none;z-index:0;">
-                <lottie-player src="{LOTTIE_DESK_PLANT}" background="transparent" speed="0.5"
-                    style="width:160px;height:160px;" loop autoplay></lottie-player>
+            <div class="footer-lottie" style="position:absolute;right:calc(50% - 480px);bottom:0;opacity:0.18;pointer-events:none;z-index:0;">
+                <lottie-player src="{LOTTIE_DESK_PLANT}" background="transparent" speed="1" loop autoplay
+                    style="width:160px;height:160px;"></lottie-player>
             </div>
             '''),
 
@@ -166,7 +163,6 @@ def index() -> rx.Component:
 def services() -> rx.Component:
     """Placeholder Services page – to be built later."""
     return rx.box(
-        rx.script(src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"),
         header.header_component(),
         rx.center(
             rx.vstack(
@@ -186,6 +182,11 @@ def services() -> rx.Component:
 
 
 app = rx.App(
+    head_components=[
+        rx.script(
+            src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js",
+        ),
+    ],
     theme=rx.theme(
         appearance="light",
         has_background=True,

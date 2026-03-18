@@ -26,14 +26,16 @@ def _nav_link(label: str, href: str, icon_tag: str) -> rx.Component:
 def header_component() -> rx.Component:
 
     logo_src = rx.color_mode_cond(
-        light="/ktt_logo_black.png",
-        dark="/KTT_logo_white.png",
+        # Light theme (white background) uses the white logo, dark theme uses the black logo.
+        light="/KTT_logo_white.png",
+        dark="/ktt_logo_black.png",
     )
 
     return rx.box(
         rx.hstack(
             # Logo
             rx.image(
+                id="site-logo",
                 src=logo_src,
                 height="36px",
                 cursor="pointer",
@@ -95,6 +97,7 @@ def header_component() -> rx.Component:
                         color=rx.color_mode_cond(AppState.theme.light_accent, AppState.theme.dark_accent),
                         size=20,
                     ),
+                    id="theme-toggle",
                     cursor="pointer",
                     on_click=rx.toggle_color_mode,
                     padding="0.5rem",
@@ -135,7 +138,45 @@ def header_component() -> rx.Component:
             width="100%",
             align_items="center",
         ),
-        # Header container styling
+        rx.html(
+            """
+            <script>
+            (function() {
+                function isDarkMode() {
+                    const styleScheme = document.documentElement.style.colorScheme;
+                    if (styleScheme) return styleScheme === "dark";
+                    return document.documentElement.classList.contains("dark");
+                }
+
+                function syncAssets() {
+                    const isDark = isDarkMode();
+                    const logo = document.getElementById("site-logo");
+                    if (logo) {
+                        logo.src = isDark ? "/ktt_logo_black.png" : "/KTT_logo_white.png";
+                    }
+
+                    const vl = document.getElementById("hero-video-light");
+                    const vd = document.getElementById("hero-video-dark");
+                    if (vl && vd) {
+                        vl.style.display = isDark ? "none" : "block";
+                        vd.style.display = isDark ? "block" : "none";
+                    }
+                }
+
+                syncAssets();
+
+                const obs = new MutationObserver(syncAssets);
+                obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] });
+
+                const toggle = document.getElementById("theme-toggle");
+                if (toggle) {
+                    toggle.addEventListener("click", () => setTimeout(syncAssets, 10));
+                }
+            })();
+            </script>
+            """,
+        ),
+        # Header container styling (floating glass panel)
         position="fixed",
         top="16px",
         left="50%",
